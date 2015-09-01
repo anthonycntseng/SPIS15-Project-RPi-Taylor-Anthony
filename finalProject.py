@@ -43,7 +43,7 @@ def straight():
 	q.ChangeDutyCycle(0)
 	a.ChangeDutyCycle(fast)
 	b.ChangeDutyCycle(0)
-	print('straight')
+	print('follow line - straight')
 
 def leanLeft():
 	#turns right since robot is leaning left
@@ -51,7 +51,7 @@ def leanLeft():
 	q.ChangeDutyCycle(fast)
 	a.ChangeDutyCycle(fast)
 	b.ChangeDutyCycle(0)
-	print('leaned left so turned right')
+	print('follow line - leaned left so turned right')
 	
 def leanRight():
 	#turns left since robot is leaning right
@@ -59,7 +59,7 @@ def leanRight():
 	q.ChangeDutyCycle(0)
 	a.ChangeDutyCycle(0)
 	b.ChangeDutyCycle(fast)
-	print('leaned right so turned left')
+	print('follow line - leaned right so turned left')
 
 def turnRight():
 	#turns right
@@ -70,23 +70,22 @@ def turnRight():
 	print('right turn')
 	time.sleep(0.5)
 
-def turnLeft():
+#def turnLeft():
 	#turns left
-	p.ChangeDutyCycle(fast)
-	q.ChangeDutyCycle(0)
-	a.ChangeDutyCycle(0)
-	b.ChangeDutyCycle(slow)
-	print('left turn')
-	time.sleep(0.5)
+#	p.ChangeDutyCycle(fast)
+#	q.ChangeDutyCycle(0)
+#	a.ChangeDutyCycle(0)
+#	b.ChangeDutyCycle(slow)
+#	print('left turn')
 	
 def turnAround():
-	#turns around 180 degrees using a left turn
+	#turns around using a left turn
+	stop()
 	p.ChangeDutyCycle(fast)
 	q.ChangeDutyCycle(0)
 	a.ChangeDutyCycle(0)
-	b.ChangeDutyCycle(0)
+	b.ChangeDutyCycle(fast)
 	print('turn around')
-	time.sleep(0.5)
 
 def stop():
 	p.ChangeDutyCycle(0)
@@ -96,33 +95,29 @@ def stop():
 	print('stop')
 
 def followLine():
-	if GPIO.input(left)==0 and GPIO.input(right)==0:
+	if GPIO.input(middle)==1:
 		straight()
-	if GPIO.input(left)==1:
+	elif GPIO.input(left)==1:
 		leanRight()
-	if GPIO.input(right)==1:
+	elif GPIO.input(right)==1:
 		leanLeft()
 
 try:
        while True:
-#                  if GPIO.input(12)==1 and GPIO.input(13)==1 or globalstop==1:
-#                  if False:
-#                          a.ChangeDutyCycle(0)
-#                          b.ChangeDutyCycle(0)
-#                          p.ChangeDutyCycle(0)
-#                          q.ChangeDutyCycle(0)
-#                          time.sleep(0.5)
-#                          print('stop')
-		  if GPIO.input(farLeft)==0 and GPIO.input(farRight)==0:
+		  print('far right = ' + str(GPIO.input(farRight)) + 'right = ' + str(GPIO.input(right)) + 'middle = ' + str(GPIO.input(middle)) + 'left = ' + str(GPIO.input(left)) + 'farLeft = ' + str(GPIO.input(farLeft)))
+		  if GPIO.input(farLeft)==0 and GPIO.input(left)==0 and GPIO.input(middle)==0 and GPIO.input(right)==0 and GPIO.input(farRight)==0:
+			  turnAround()
+		  elif GPIO.input(farLeft)==0 and GPIO.input(farRight)==0:
 			  followLine()
-		  elif GPIO.input(farLeft)==0 and GPIO.input(farRight)==1:
+		  elif GPIO.input(farRight)==1:
 			  turnRight()
-		  elif GPIO.input(farLeft)==1 and GPIO.input(farRight)==0:
-			  turnLeft()
-		  elif GPIO.input(farLeft)==1 and GPIO.input(farRight)==1:
-			  turnRight()
-	  
+		  elif GPIO.input(left)==1 and GPIO.input(middle)==1:	
+			  straight()
+		  elif GPIO.input(right)==1 and GPIO.input(middle)==1:
+			  straight()
+		 	  
 except KeyboardInterrupt:
        finished = True  # stop other loops
        GPIO.cleanup()
        sys.exit()
+
